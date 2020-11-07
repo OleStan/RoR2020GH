@@ -1,5 +1,7 @@
 class Pet
-  def initialize
+  def initialize (animal, name, stomach, hp, interest, sleepiness, intelect, purity)
+    @animal = animal
+    @name = name
     @hp = hp
     @interest = interest
     @stomach = stomach
@@ -7,9 +9,51 @@ class Pet
     @intelect = intelect
     @purity = purity
   end
+
+  def voice
+    case @animal
+    when "cat"
+      'meow'
+    when "dog"
+      'bark'
+    when "hamster"
+      'pee-pee'
+    end
+  end
+
+  # action------------------------------------------
+  def feed()
+
+  end
+  def play
+
+  end
+  def wash
+
+  end
+  def look_at
+
+  end
+  def walk
+
+  end
+  def put_to_sleep
+
+  end
+  def train
+
+  end
+
+
+
+
+
+
+
 end
 
-class Time
+
+class Timer
 
 end
 
@@ -18,47 +62,74 @@ class Dog < Pet
   def voice
     "Bark"
   end
-=begin
-  __      _
-o'')}____//
- `_/      )
- (_(_/-(_/
-=end
+  def render
+    "         ,
+            |`-.__
+            / ' _/
+           ****`
+          /    }
+         /  1 /
+     1 /`   lll
+     `l     /_ll
+       `~~~~~``~`"
+  end
 end
 
 class Cat < Pet
   def voice
     "Meiw"
   end
-=begin
-   |\---/|
-   | ,_, |
-    \_`_/-..----.
- ___/ `   ' ,""+ \
-(__...'   __\    |`.___.';
-  (_,...'(_,.`__)/'.....+
-=end
+  def render
+    "       ,
+       l`-._           __
+        \\  `-..____,.'  `.
+         :`.         /    l`.
+         :  )       :      : l
+          ;'        '   ;  |  :
+          )..      .. .:.`.;  :
+         /::...  .:::...   ` ;
+         ; _ '    __        /:l
+         `:o>   /lo_>      ;:. `.
+        `-`.__ ;   __..--- /:.   l
+        === l_/   ;=====_.':.     ;
+         ,/'`--'...`--....        ;
+              ;                    ;
+            .'                      ;
+          .'                        ;
+        .'     ..     ,      .       ;
+       :       ::..  /      ;::.     |
+      /      `.;::.  |       ;:..    ;
+     :         |:.   :       ;:.    ;
+     :         ::     ;:..   |.    ;
+      :       :;      :::....|     |
+      /l     ,/ l      ;:::::;     ;
+    .:. l:..|    :     ; '.--|     ;
+   ::.  :''  `-.,,;     ;'   ;     ;
+.-'. _.'l      / `;      l,__:      l
+`---'    `----'   ;      /    l,.,,,/
+                   `----`"
+  end
 end
 
 class Humster < Pet
   def voice
     "peek-peek"
   end
-=begin
-             .     .
-            (>\---/<)
+  def render
+    "             .     .
+            (>l---/<)
             ,'     `.
-           /  q   p  \
+           /  q   p  l
           (  >(_Y_)<  )
            >-' `-' `-<-.
-          /  _.== ,=.,- \
+          /  _.== ,=.,- l
          /,    )`  '(    )
         ; `._.'      `--<
-       :     \        |  )
-       \      )       ;_/  hjw
-        `._ _/_  ___.'-\\\
-           `--\\\
-=end
+       :     l        |  )
+       l      )       ;_/
+        `._ _/_  ___.'-l
+           `--l"
+  end
 end
 
 
@@ -88,8 +159,15 @@ end
 def look_at
 
 end
-def
+def walk
 
+end
+def put_to_sleep
+
+end
+def train
+
+end
 
 
 
@@ -103,3 +181,26 @@ end
 def game
 
 end
+
+
+
+
+
+
+print " chose you animal"
+input_pet_choise = gets.chomp
+
+case input_pet_choise
+when 1
+  pet = Dog.new('dog', 'sdsd', )
+when 2
+  pet = Humster.new('cat', 'sdsd')
+when 3
+  pet = Humster.new('humster', 'sdsd')
+end
+
+
+
+pet = Humster.new('cat', 'sdsd')
+puts " #{pet.voice}"
+puts " #{pet.render}"
