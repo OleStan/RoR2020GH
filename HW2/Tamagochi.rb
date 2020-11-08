@@ -39,45 +39,123 @@ class Pet
   end
 
   # action------------------------------------------
-  def feed
+  def feed(pet, timer)
+    timer.day_time += 1
+    puts "You feed #{pet.name} and now #{timer.day_period}"
+    timer.status_counting(pet, timer, healing)
+    status(pet, timer)
   end
 
-  def play; end
+  def play(pet, timer)
+    timer.day_time += 1
+    puts "You play with #{pet.name} and now #{timer.day_period}"
+    timer.status_counting(pet, timer, playing)
+    status(pet, timer)
+  end
 
-  def wash; end
+  def wash(pet, timer)
+    timer.day_time += 1
+    puts "You wash #{pet.name} and now #{timer.day_period}"
+    timer.status_counting(pet, timer, cleaning)
+    status(pet, timer)
+  end
 
-  def look_at; end
+  def look_at(pet, timer)
+    timer.day_time += 1
+    puts "You just look at #{pet.name} and now #{timer.day_period}"
+    timer.status_counting(pet, timer, looking)
+    status(pet, timer)
+  end
 
-  def walk; end
+  def walk(pet, timer)
+    timer.day_time && pet.interest += 1
+    pet.stomach && pet.purity -= 1
+    puts "You walpet.name# and now #{timer.day_period}"
+    timer.status_counting(pet, timer, healing)
+    status(pet, timer)
+  end
 
-  def put_to_sleep; end
+  def put_to_sleep(pet, timer)
+    timer.day_time = 1
+    puts "You put sleep #{pet.name} and now #{timer.day_period}"
+    pet.interest && pet.stomach && pet.purity -= 1
+    pet.intelect -= 1 if rand(1..3) == 2
+    pet.sleepiness = timer.max_sleepiness
+    timer.status_counting(pet, timer, healing)
+    status(pet, timer)
+  end
 
-  def train; end
-
-  class Timer
-    def initialize
-      @day_time = day_time
-    end
-    def day_period(day_time)
-      case day_time
-      when 1
-        'Morning'
-      when 2
-        'Noonday'
-      else
-        'Evening'
-
-      end
-    end
+  def train(pet, timer)
+    timer.day_time && pet.intelect += 1
+    pet.stomach -= 1
+    puts "You train #{pet.name} and now #{timer.day_period}"
+    status(pet, timer)
   end
 end
 
+class Timer
+  attr_accessor :day_time
+  attr_reader :max_hp, :max_interest, :max_stomach, :max_sleepiness, :max_intelect, :max_purity
 
+  def initialize(day_time)
+    @day_time = day_time.to_f
+    @max_hp = 6
+    @max_interest = 5
+    @max_stomach = 4
+    @max_sleepiness = 3
+    @max_intelect = 6
+    @max_purity = 4
+    @day_count = 0
+  end
+
+  def status_counting(pet, timer, action)
+    case action
+    when 'healing'
+      pet.stomach += 1
+      pet.hp += rand(0..1) if pet.hp != timer.max_hp
+      pet.sleepiness -= 1
+    when 'playing'
+      pet.interest += 1 if pet.interest != timer.max_interest
+      pet.stomach && pet.sleepiness -= 1
+    when 'cleaning'
+      pet.interest -= 1
+      pet.purity = timer.max_purity
+    when 'looking'
+      pet.interest -= 1
+      pet.stomach -= 1
+      pet.sleepiness -= 1
+      pet.intelect -= 1
+      pet.purity -= 1
+      pet.hp -= 1
+    when ''
+    when ''
+    when ''
+
+    end
+
+  end
+  def day_period
+    case @day_time
+    when 1
+      'Morning'
+
+    when 2
+      'Noonday'
+
+    else
+      'Evening'
+    end
+  end
+
+
+end
 
 # start game--------------------------------------
 
-def dayli(pet)
+def dayli(pet, timer)
+  if timer.day_time != 3
   puts "---------------------------
+
  Chose what you wanna do
 1.feed             5.walk
 2.play             6.put_to_sleep
@@ -87,50 +165,75 @@ Comand: "
   input_action = gets.chomp.to_f
   case input_action
   when 1
-    pet.feed
+    pet.feed(pet, timer)
   when 2
-    pet.play
+    pet.play(pet, timer)
   when 3
-    pet.wash
+    pet.wash(pet, timer)
   when 4
-    pet.look_at
+    pet.look_at(pet, timer)
   when 5
-    pet.walk
+    pet.walk(pet, timer)
   when 6
-    pet.put_to_sleep
+    pet.put_to_sleep(pet, timer)
   when 7
-    pet.train
+    pet.train(pet, timer)
   else
     puts "    !!!!!!!!!!!!!!!!!!!!!!!!
     !! Type corect number !!
     !!!!!!!!!!!!!!!!!!!!!!!!"
-    dayli(pet)
+    dayli(pet, timer)
+  end
+  else
+    puts "---------------------------
+Its to late you can only sleep
+        1.put_to_sleep
+
+Comand: "
+    input_action = gets.chomp.to_f
+    if input_action == 1
+      pet.put_to_sleep(pet, timer)
+    else
+       puts "    !!!!!!!!!!!!!!!!!!!!!!!!
+    !! Type corect number !!
+    !!!!!!!!!!!!!!!!!!!!!!!!"
+    end
   end
 end
 
 def start_game
   print ' chose you animal name:  '
   input_pet_name = gets.chomp
-  pet = Pet.new('dog', input_pet_name.capitalize, 5, 10, 4, 4, 2, 6)
-  timer = Timer.new('1')
+  pet = Pet.new('dog', input_pet_name.capitalize, 5, 6, 4, 4, 2, 6)
+  timer = Timer.new(1)
   puts " #{pet.render}"
   puts "#{pet.name} say #{pet.voice}"
-  status(pet)
-  game(pet)
+  status(pet, timer)
+  game(pet, timer)
 end
 
 def status(pet, timer)
-  puts " #{pet.name}  stat
-Time = #{}
+  puts " #{pet.name}  status
+Time = #{timer.day_period}
 ---------------------------------------------
 |hp| = #{pet.hp}     |stomach| = #{pet.stomach}    |purity| = #{pet.purity}
 |interes| = #{pet.interest} |sleepiness| = #{pet.sleepiness} |intelect| = #{pet.intelect}
 --------------------------------------------- "
+  puts danger_notification(pet).to_s
 end
 
-def game(pet)
-  dayli(pet)
+def danger_notification(pet)
+  puts "#{pet.name} hp is #{pet.hp} and it's to low. Feed #{pet.name}" if pet.hp < 2
+  puts "#{pet.name} stomach is #{pet.stomach} and it's to low. Feed #{pet.name}" if pet.stomach < 2
+  puts "#{pet.name} purity is #{pet.purity} and it's to low. Wash #{pet.name}" if pet.purity < 2
+  puts "#{pet.name} interest is #{pet.interest} and it's to low. Play or walk with #{pet.name} " if pet.interest < 3
+  puts "#{pet.name} sleepiness is #{pet.sleepiness} and it's to low. #{pet.name} need a rest " if pet.sleepiness < 1
+  puts "#{pet.name} intelect is #{pet.intelect} and it's to low. Train #{pet.name}" if pet.intelect < 2
+end
+
+def game(pet, timer)
+  dayli(pet, timer)
+  game(pet, timer)
 end
 
 start_game
-
