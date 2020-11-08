@@ -69,7 +69,7 @@ class Pet
 
   def walk(pet, timer)
     timer.day_time += 1
-    puts "You walpet.name# and now #{timer.day_period}"
+    puts "You walk with #{pet.name} and now #{timer.day_period}"
     timer.status_counting(pet, timer, 'walking')
     status(pet, timer)
   end
@@ -110,42 +110,77 @@ class Timer
     when 'healing'
       pet.stomach += 1 if pet.stomach <= timer.max_stomach
       pet.hp += rand(0..1) if pet.hp != timer.max_hp
-      pet.sleepiness -= 1 if pet.sleepiness >= 0
+      pet.sleepiness -= 1 if pet.sleepiness > 0
     when 'playing'
       pet.interest += 1 if pet.interest <= timer.max_interest
-      pet.stomach -= 1 if pet.stomach >= 0
-      pet.sleepiness -= 1 if pet.sleepiness >= 0
+      pet.stomach -= 1 if pet.stomach > 0
+      pet.sleepiness -= 1 if pet.sleepiness > 0
     when 'cleaning'
-      pet.interest -= 1 if pet.interest >= 0
+      pet.interest -= 1 if pet.interest > 0
       pet.purity = timer.max_purity
     when 'looking'
-      pet.interest -= 1 if pet.interest >= 0
-      pet.stomach -= 1 if pet.stomach >= 0
-      pet.sleepiness -= 1 if pet.sleepiness >= 0
-      pet.intelect -= 1 if pet.intelect >= 0
-      pet.purity -= 1 if pet.purity >= 0
-      pet.hp -= 1 if pet.hp >= 0
+      pet.interest -= 1 if pet.interest > 0
+      pet.stomach -= 1 if pet.stomach > 0
+      pet.sleepiness -= 1 if pet.sleepiness > 0
+      pet.intelect -= 1 if pet.intelect > 0
+      pet.purity -= 1 if pet.purity > 0
+      pet.hp -= 1 if pet.hp > 0
     when 'walking'
       pet.interest += 1 if pet.interest <= timer.max_interest
-      pet.stomach -= 1 if pet.stomach >= 0
-      pet.purity -= 1 if pet.purity >= 0
+      pet.stomach -= 1 if pet.stomach > 0
+      pet.purity -= 1 if pet.purity > 0
+      timer.random_actions(pet, 'walking', timer)
     when 'sleeping'
-      pet.interest -= 1 if pet.interest >= 0
-      pet.stomach -= 1 if pet.stomach >= 0
+      pet.interest -= 1 if pet.interest > 0
+      pet.stomach -= 1 if pet.stomach > 0
       pet.sleepiness = timer.max_sleepiness
-      pet.intelect -= 1 if rand(1..3) == 2 && pet.intelect >= 0
-      pet.purity -= 1 if pet.purity >= 0
+      pet.intelect -= 1 if rand(1..3) == 2 && pet.intelect > 0
+      pet.purity -= 1 if pet.purity > 0
     when 'power_up'
       pet.intelect += 1 if pet.intelect <= timer.max_intelect
-      pet.stomach -= 1 if pet.stomach >= 0
+      pet.stomach -= 1 if pet.stomach > 0
     end
   end
   def endings(pet)
     ending_title(pet, 'die') if pet.hp == 0
+
   end
 
-  def random_event(pet, action)
+  def random_actions(pet, actions, timer)
+    case actions
+    when 'walking'
+      random_event(pet, timer, 'walking', rand(1..5)) if pet.intelect < 2
+      random_event(pet, timer, 'walking', rand(3..5)) if pet.intelect >= 2 && pet.intelect <= 4
+      random_event(pet, timer, 'walking', rand(4..5)) if pet.intelect > 4
+    when 'power_up'
+      random_event(pet, timer, 'power_up', rand(1..5))
+    when 'playing'
+      random_event(pet, timer, 'playing', rand(1..5))
+    end
+  end
 
+
+
+  def random_event(pet, timer, action, situation)
+    case action
+    when 'walking'
+      case situation
+      when 1
+        pet.stomach -=3 if pet.stomach > 3
+        pet.stomach = 0 if pet.stomach < 3
+        pet.hp -= 1
+        puts "When you walking your pet found trash and eat it. It's hart...."
+      when 3
+        pet.stomach += 3
+        pet.stomach = timer.max_stomach if pet.stomach < timer.max_stomach - 3
+        pet.hp += 1 if pet.hp != timer.max_hp
+        puts "When you walking your pet normal food. Next time be careful you may catch something dangerous"
+      when 5
+        pet.stomach = timer.max_stomach
+        pet.hp = timer.max_hp
+        puts "During your walkin #{pet.name} breathed freash air and it feel nice"
+      end
+    end
   end
 
   def ending_title(pet, reson)
@@ -160,12 +195,14 @@ class Timer
 "
       finish_game = true
     when 'disapere'
-
     end
   end
 
 
-
+  def danger_moments (pet)
+    pet.hp -= 1 if pet.purity == 0
+    pet.hp -= 1 if pet.stomach == 0
+  end
 
   def day_period
     case @day_time
@@ -266,6 +303,7 @@ end
 
 def game(pet, timer)
   timer.endings(pet)
+  timer.danger_moments (pet)
   dayli(pet, timer) unless timer.finish_game
   game(pet, timer) unless timer.finish_game
 end
