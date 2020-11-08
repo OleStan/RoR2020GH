@@ -42,60 +42,56 @@ class Pet
   def feed(pet, timer)
     timer.day_time += 1
     puts "You feed #{pet.name} and now #{timer.day_period}"
-    timer.status_counting(pet, timer, healing)
+    timer.status_counting(pet, timer, 'healing')
     status(pet, timer)
   end
 
   def play(pet, timer)
     timer.day_time += 1
     puts "You play with #{pet.name} and now #{timer.day_period}"
-    timer.status_counting(pet, timer, playing)
+    timer.status_counting(pet, timer, 'playing')
     status(pet, timer)
   end
 
   def wash(pet, timer)
     timer.day_time += 1
     puts "You wash #{pet.name} and now #{timer.day_period}"
-    timer.status_counting(pet, timer, cleaning)
+    timer.status_counting(pet, timer, 'cleaning')
     status(pet, timer)
   end
 
   def look_at(pet, timer)
     timer.day_time += 1
     puts "You just look at #{pet.name} and now #{timer.day_period}"
-    timer.status_counting(pet, timer, looking)
+    timer.status_counting(pet, timer, 'looking')
     status(pet, timer)
   end
 
   def walk(pet, timer)
-    timer.day_time && pet.interest += 1
-    pet.stomach && pet.purity -= 1
+    timer.day_time += 1
     puts "You walpet.name# and now #{timer.day_period}"
-    timer.status_counting(pet, timer, healing)
+    timer.status_counting(pet, timer, 'walking')
     status(pet, timer)
   end
 
   def put_to_sleep(pet, timer)
     timer.day_time = 1
     puts "You put sleep #{pet.name} and now #{timer.day_period}"
-    pet.interest && pet.stomach && pet.purity -= 1
-    pet.intelect -= 1 if rand(1..3) == 2
-    pet.sleepiness = timer.max_sleepiness
-    timer.status_counting(pet, timer, healing)
+    timer.status_counting(pet, timer, 'sleeping')
     status(pet, timer)
   end
 
   def train(pet, timer)
-    timer.day_time && pet.intelect += 1
-    pet.stomach -= 1
+    timer.day_time += 1
     puts "You train #{pet.name} and now #{timer.day_period}"
+    timer.status_counting(pet, timer, 'power_up')
     status(pet, timer)
   end
 end
 
 class Timer
   attr_accessor :day_time
-  attr_reader :max_hp, :max_interest, :max_stomach, :max_sleepiness, :max_intelect, :max_purity
+  attr_reader :max_hp, :max_interest, :max_stomach, :max_sleepiness, :max_intelect, :max_purity, :finish_game
 
   def initialize(day_time)
     @day_time = day_time.to_f
@@ -106,34 +102,71 @@ class Timer
     @max_intelect = 6
     @max_purity = 4
     @day_count = 0
+    @finish_game = false
   end
 
   def status_counting(pet, timer, action)
     case action
     when 'healing'
-      pet.stomach += 1
+      pet.stomach += 1 if pet.stomach <= timer.max_stomach
       pet.hp += rand(0..1) if pet.hp != timer.max_hp
-      pet.sleepiness -= 1
+      pet.sleepiness -= 1 if pet.sleepiness >= 0
     when 'playing'
-      pet.interest += 1 if pet.interest != timer.max_interest
-      pet.stomach && pet.sleepiness -= 1
+      pet.interest += 1 if pet.interest <= timer.max_interest
+      pet.stomach -= 1 if pet.stomach >= 0
+      pet.sleepiness -= 1 if pet.sleepiness >= 0
     when 'cleaning'
-      pet.interest -= 1
+      pet.interest -= 1 if pet.interest >= 0
       pet.purity = timer.max_purity
     when 'looking'
-      pet.interest -= 1
-      pet.stomach -= 1
-      pet.sleepiness -= 1
-      pet.intelect -= 1
-      pet.purity -= 1
-      pet.hp -= 1
-    when ''
-    when ''
-    when ''
-
+      pet.interest -= 1 if pet.interest >= 0
+      pet.stomach -= 1 if pet.stomach >= 0
+      pet.sleepiness -= 1 if pet.sleepiness >= 0
+      pet.intelect -= 1 if pet.intelect >= 0
+      pet.purity -= 1 if pet.purity >= 0
+      pet.hp -= 1 if pet.hp >= 0
+    when 'walking'
+      pet.interest += 1 if pet.interest <= timer.max_interest
+      pet.stomach -= 1 if pet.stomach >= 0
+      pet.purity -= 1 if pet.purity >= 0
+    when 'sleeping'
+      pet.interest -= 1 if pet.interest >= 0
+      pet.stomach -= 1 if pet.stomach >= 0
+      pet.sleepiness = timer.max_sleepiness
+      pet.intelect -= 1 if rand(1..3) == 2 && pet.intelect >= 0
+      pet.purity -= 1 if pet.purity >= 0
+    when 'power_up'
+      pet.intelect += 1 if pet.intelect <= timer.max_intelect
+      pet.stomach -= 1 if pet.stomach >= 0
     end
+  end
+  def endings(pet)
+    ending_title(pet, 'die') if pet.hp == 0
+  end
+
+  def random_event(pet, action)
 
   end
+
+  def ending_title(pet, reson)
+    case reson
+    when 'die'
+      puts "#{pet.name} die
+      ,-=-.
+     /  +  l
+     | ~~~ |
+     |R.I.P|
+     |_____|
+"
+      finish_game = true
+    when 'disapere'
+
+    end
+  end
+
+
+
+
   def day_period
     case @day_time
     when 1
@@ -232,8 +265,9 @@ def danger_notification(pet)
 end
 
 def game(pet, timer)
-  dayli(pet, timer)
-  game(pet, timer)
+  timer.endings(pet)
+  dayli(pet, timer) unless timer.finish_game
+  game(pet, timer) unless timer.finish_game
 end
 
 start_game
