@@ -462,8 +462,8 @@ def dayli(pet, timer)
 
  Chose what you wanna do
 1.feed             5.walk
-2.play             6.put_to_sleep
-3.wash             7.train
+2.play             6.train
+3.wash            
 4.look at(nothing)
 Comand: "
     input_action = gets.chomp.to_f
