@@ -233,10 +233,10 @@ class Pet
 #{pet.name}  status
 
 Time = #{timer.day_period}
----------------------------------------------
-|hp| = #{pet.hp}     |stomach| = #{pet.stomach}    |purity| = #{pet.purity}
-|interes| = #{pet.interest} |sleepiness| = #{pet.sleepiness} |intelect| = #{pet.intelect}
---------------------------------------------- ".cyan
+----------------------------------------------------------
+|  hp   | = #{pet.hp} / #{timer.max_hp}  |  stomach | = #{pet.stomach} / #{timer.max_stomach} | purity | = #{pet.purity} / #{timer.max_purity}
+|interes| = #{pet.interest} / #{timer.max_interest}  |sleepiness| = #{pet.sleepiness} / #{timer.max_sleepiness} |intelect| = #{pet.intelect} / #{timer.max_intelect}
+---------------------------------------------------------- ".cyan
   end
 end
 
@@ -293,45 +293,46 @@ class Timer
         pet.stomach -= 3 if pet.stomach > 3
         pet.stomach = 0 if pet.stomach < 3
         pet.hp -= 1
-        $notification_event = "When you walking your pet found trash and eat it. It's hurts....".bg_brown.black.italic
+        $notification_event = "When you walking your pet found trash and eat it. It's hurts....(-3 stomach and -1 hp)".bg_brown.black.italic
       when 3
-        pet.stomach += 3
+        pet.stomach += 2
         pet.stomach = timer.max_stomach if pet.stomach < timer.max_stomach - 3
         pet.hp += 1 if pet.hp != timer.max_hp
-        $notification_event = 'When you walking your pet normal food. Next time be careful you may catch something dangerous'.bg_brown.black.italic
+        $notification_event = 'When you walking your pet normal food. Next time be careful you may catch something dangerous
+(+2 stomach and +1 hp)'.bg_brown.black.italic
       when 5
         pet.stomach = timer.max_stomach
         pet.hp = timer.max_hp
-        $notification_event = "During your walkin #{pet.name} breathed freash air and it feel nice".bg_brown.black.italic
+        $notification_event = "During your walkin #{pet.name} breathed freash air and it feel nice(max stomach and max hp)".bg_brown.black.italic
       end
     when 'power_up'
 
       case situation
       when 1
         pet.hp -= 2
-        $notification_event = 'When you trained your pet, you were inattentive. It hurts .... '.bg_brown.black.italic
+        $notification_event = 'When you trained your pet, you were inattentive. It hurts .... ( -2 hp)'.bg_brown.black.italic
       when 3
         pet.intelect += 1 if pet.intelect <= timer.max_intelect - 1
         pet.hp += 1 if pet.hp != timer.max_hp - 1
-        $notification_event = 'Your training is successful. Get extra bonus'.bg_brown.black.italic
+        $notification_event = 'Your training is successful. Get extra bonus(+1 intelect and +1 hp)'.bg_brown.black.italic
       when 5
         pet.intelect += 2 if pet.intelect <= timer.max_intelect - 3
         pet.hp += 2 if pet.hp != timer.max_hp - 2
-        $notification_event = 'Your training is very successful. Get mega bonus'.bg_brown.black.italic
+        $notification_event = 'Your training is very successful. Get mega bonus(+2 intelect and +2 hp)'.bg_brown.black.italic
       end
     when 'playing'
       if 1
         pet.hp -= 2
-        $notification_event = 'When you play with your pet, you were inattentive. It hurts .... '.bg_brown.black.italic
+        $notification_event = 'When you play with your pet, you were inattentive. It hurts .... (-2 hp)'.bg_brown.black.italic
       elsif 3
         pet.intelect += 1 if pet.intelect <= timer.max_intelect - 1
         pet.hp += 1 if pet.hp != timer.max_hp - 1
-        $notification_event = 'Your playing is successful. Get extra bonus'.bg_brown.black.italic
+        $notification_event = 'Your playing is successful. Get extra bonus(+1 intelect and +1 hp)'.bg_brown.black.italic
       elsif 5
         pet.interest += 1 if pet.interest <= timer.max_interest - 2
         pet.intelect += 1 if pet.intelect <= timer.max_intelect - 2
         pet.hp += 2 if pet.hp != timer.max_hp - 2
-        $notification_event = 'Your playing is very successful. Get mega bonus'.bg_brown.black.italic
+        $notification_event = 'Your playing is very successful. Get mega bonus(+ 1 interest and +1 intelect and +1 hp)'.bg_brown.black.italic
       end
     end
   end
@@ -478,8 +479,6 @@ Comand: "
     when 5
       pet.walk(pet, timer)
     when 6
-      pet.put_to_sleep(pet, timer)
-    when 7
       pet.train(pet, timer)
       else
         pet.out_stat(pet, timer)
@@ -500,9 +499,9 @@ Comand: "
       pet.put_to_sleep(pet, timer)
     else
       pet.out_stat(pet, timer)
-      puts "    !!!!!!!!!!!!!!!!!!!!!!!!
-    !! Type corect number !!
-    !!!!!!!!!!!!!!!!!!!!!!!!".bg_red.black
+      puts " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ !!Its to late you can only sleep!!
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!".bg_red.black
     end
   end
 
@@ -515,13 +514,13 @@ def start_game
   pet = Pet.new('dog', input_pet_name.capitalize, 5, 6, 4, 4, 2, 6)
   timer = Timer.new(1)
   puts " #{pet.render}"
-  puts "#{pet.name} say #{pet.voice}"
+  puts "#{pet.name} #{pet.voice}s : Hello!"
   puts " #{pet.name}  status
 Time = #{timer.day_period}
----------------------------------------------
-|hp| = #{pet.hp}     |stomach| = #{pet.stomach}    |purity| = #{pet.purity}
-|interes| = #{pet.interest} |sleepiness| = #{pet.sleepiness} |intelect| = #{pet.intelect}
---------------------------------------------- ".cyan
+----------------------------------------------------------
+|  hp   | = #{pet.hp} / #{timer.max_hp}  |  stomach | = #{pet.stomach} / #{timer.max_stomach} | purity | = #{pet.purity} / #{timer.max_purity}
+|interes| = #{pet.interest} / #{timer.max_interest}  |sleepiness| = #{pet.sleepiness} / #{timer.max_sleepiness} |intelect| = #{pet.intelect} / #{timer.max_intelect}
+---------------------------------------------------------- ".cyan
 
   game(pet, timer)
 end
@@ -537,6 +536,8 @@ def game(pet, timer)
 end
 
 start_game
-puts 'pres ENTER to start new game'
+puts 'pres ENTER to start new game
+                   or
+0 and ENTER to escape '
 enter_button = gets.chomp
-start_game if enter_button == enter_button
+start_game if enter_button != 0
