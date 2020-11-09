@@ -97,6 +97,8 @@ class Pet
     @sleepiness = sleepiness
     @intelect = intelect
     @purity = purity
+    $notification_event = ''
+    $notification_action = ''
   end
 
   def render
@@ -126,35 +128,35 @@ class Pet
   # action------------------------------------------
   def feed(pet, timer)
     timer.day_time += 1
-    puts "You feed #{pet.name} and now #{timer.day_period}"
+    $notification_action = "You feed #{pet.name} and now #{timer.day_period}"
     timer.status_counting(pet, timer, 'healing')
     status(pet, timer)
   end
 
   def play(pet, timer)
     timer.day_time += 1
-    puts "You play with #{pet.name} and now #{timer.day_period}"
+    $notification_action = "You play with #{pet.name} and now #{timer.day_period}"
     timer.status_counting(pet, timer, 'playing')
     status(pet, timer)
   end
 
   def wash(pet, timer)
     timer.day_time += 1
-    puts "You wash #{pet.name} and now #{timer.day_period}"
+    $notification_action = "You wash #{pet.name} and now #{timer.day_period}"
     timer.status_counting(pet, timer, 'cleaning')
     status(pet, timer)
   end
 
   def look_at(pet, timer)
     timer.day_time += 1
-    puts "You just look at #{pet.name} and now #{timer.day_period}"
+    $notification_action = "You just look at #{pet.name} and now #{timer.day_period}"
     timer.status_counting(pet, timer, 'looking')
     status(pet, timer)
   end
 
   def walk(pet, timer)
     timer.day_time += 1
-    puts "You walk with #{pet.name} and now #{timer.day_period}"
+    $notification_action = "You walk with #{pet.name} and now #{timer.day_period}"
     timer.status_counting(pet, timer, 'walking')
     status(pet, timer)
     timer.endings(pet, timer, 'disappear_b') if interest? && rand(1..10) == 3
@@ -163,14 +165,14 @@ class Pet
 
   def put_to_sleep(pet, timer)
     timer.day_time = 1
-    puts "You put sleep #{pet.name} and now #{timer.day_period}"
+    $notification_action = "You put sleep #{pet.name} and now #{timer.day_period}"
     timer.status_counting(pet, timer, 'sleeping')
     status(pet, timer)
   end
 
   def train(pet, timer)
     timer.day_time += 1
-    puts "You train #{pet.name} and now #{timer.day_period}"
+    $notification_action = "You train #{pet.name} and now #{timer.day_period}"
     timer.status_counting(pet, timer, 'power_up')
     status(pet, timer)
   end
@@ -223,7 +225,9 @@ class Pet
   def status(pet, timer)
     system "clear" or system "cls"
     danger_notification(pet)
-    puts"--------------------------------------"
+    puts"---------------------------------------------------
+#{$notification_event}
+#{$notification_action}"
     puts "
          #{pet.render}
 #{pet.name}  status
@@ -289,45 +293,45 @@ class Timer
         pet.stomach -= 3 if pet.stomach > 3
         pet.stomach = 0 if pet.stomach < 3
         pet.hp -= 1
-        puts "When you walking your pet found trash and eat it. It's hurts....".bg_brown.black.italic
+        $notification_event = "When you walking your pet found trash and eat it. It's hurts....".bg_brown.black.italic
       when 3
         pet.stomach += 3
         pet.stomach = timer.max_stomach if pet.stomach < timer.max_stomach - 3
         pet.hp += 1 if pet.hp != timer.max_hp
-        puts 'When you walking your pet normal food. Next time be careful you may catch something dangerous'.bg_brown.black.italic
+        $notification_event = 'When you walking your pet normal food. Next time be careful you may catch something dangerous'.bg_brown.black.italic
       when 5
         pet.stomach = timer.max_stomach
         pet.hp = timer.max_hp
-        puts "During your walkin #{pet.name} breathed freash air and it feel nice".bg_brown.black.italic
+        $notification_event = "During your walkin #{pet.name} breathed freash air and it feel nice".bg_brown.black.italic
       end
     when 'power_up'
-      puts situation
+
       case situation
       when 1
         pet.hp -= 2
-        puts 'When you trained your pet, you were inattentive. It hurts .... '.bg_brown.black.italic
+        $notification_event = 'When you trained your pet, you were inattentive. It hurts .... '.bg_brown.black.italic
       when 3
         pet.intelect += 1 if pet.intelect <= timer.max_intelect - 1
         pet.hp += 1 if pet.hp != timer.max_hp - 1
-        puts 'Your training is successful. Get extra bonus'.bg_brown.black.italic
+        $notification_event = 'Your training is successful. Get extra bonus'.bg_brown.black.italic
       when 5
         pet.intelect += 2 if pet.intelect <= timer.max_intelect - 3
         pet.hp += 2 if pet.hp != timer.max_hp - 2
-        puts 'Your training is very successful. Get mega bonus'.bg_brown.black.italic
+        $notification_event = 'Your training is very successful. Get mega bonus'.bg_brown.black.italic
       end
     when 'playing'
       if 1
         pet.hp -= 2
-        puts 'When you play with your pet, you were inattentive. It hurts .... '.bg_brown.black.italic
+        $notification_event = 'When you play with your pet, you were inattentive. It hurts .... '.bg_brown.black.italic
       elsif 3
         pet.intelect += 1 if pet.intelect <= timer.max_intelect - 1
         pet.hp += 1 if pet.hp != timer.max_hp - 1
-        puts 'Your playing is successful. Get extra bonus'.bg_brown.black.italic
+        $notification_event = 'Your playing is successful. Get extra bonus'.bg_brown.black.italic
       elsif 5
         pet.interest += 1 if pet.interest <= timer.max_interest - 2
         pet.intelect += 1 if pet.intelect <= timer.max_intelect - 2
         pet.hp += 2 if pet.hp != timer.max_hp - 2
-        puts 'Your playing is very successful. Get mega bonus'.bg_brown.black.italic
+        $notification_event = 'Your playing is very successful. Get mega bonus'.bg_brown.black.italic
       end
     end
   end
