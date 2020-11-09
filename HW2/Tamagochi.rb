@@ -44,6 +44,7 @@ class Pet
     puts "You feed #{pet.name} and now #{timer.day_period}"
     timer.status_counting(pet, timer, 'healing')
     status(pet, timer)
+
   end
 
   def play(pet, timer)
@@ -65,6 +66,7 @@ class Pet
     puts "You just look at #{pet.name} and now #{timer.day_period}"
     timer.status_counting(pet, timer, 'looking')
     status(pet, timer)
+
   end
 
   def walk(pet, timer)
@@ -87,6 +89,56 @@ class Pet
     timer.status_counting(pet, timer, 'power_up')
     status(pet, timer)
   end
+  def geme_over
+
+  end
+
+  private
+  def over?
+    @hp <=0
+  end
+
+  def hungry?
+    @stomach <= 2
+  end
+  def ill?
+    @hp <= 2
+  end
+  def dirty?
+    @purity <= 2
+  end
+  def interest?
+    @interest <= 3
+  end
+  def stupid?
+    @intelect <= 2
+  end
+  def sleepy?
+    @sleepiness <= 1
+  end
+
+  def danger_notification(pet)
+    puts "#{pet.name} hp is #{pet.hp} and it's to low. Feed #{pet.name}" if ill?
+    puts "#{pet.name} stomach is #{pet.stomach} and it's to low. Feed #{pet.name}" if hungry?
+    puts "#{pet.name} purity is #{pet.purity} and it's to low. Wash #{pet.name}" if dirty?
+    puts "#{pet.name} interest is #{pet.interest} and it's to low. Play or walk with #{pet.name} " if interest?
+    puts "#{pet.name} sleepiness is #{pet.sleepiness} and it's to low. #{pet.name} need a rest " if sleepy?
+    puts "#{pet.name} intelect is #{pet.intelect} and it's to low. Train #{pet.name}" if stupid?
+  end
+
+  def status(pet, timer)
+    puts "
+
+#{pet.name}  status
+
+
+Time = #{timer.day_period}
+---------------------------------------------
+|hp| = #{pet.hp}     |stomach| = #{pet.stomach}    |purity| = #{pet.purity}
+|interes| = #{pet.interest} |sleepiness| = #{pet.sleepiness} |intelect| = #{pet.intelect}
+#{danger_notification(pet)}
+--------------------------------------------- "
+  end
 end
 
 class Timer
@@ -105,45 +157,9 @@ class Timer
     @finish_game = false
   end
 
-  def status_counting(pet, timer, action)
-    case action
-    when 'healing'
-      pet.stomach += 1 if pet.stomach <= timer.max_stomach
-      pet.hp += rand(0..1) if pet.hp != timer.max_hp
-      pet.sleepiness -= 1 if pet.sleepiness > 0
-    when 'playing'
-      pet.interest += 1 if pet.interest <= timer.max_interest
-      pet.stomach -= 1 if pet.stomach > 0
-      pet.sleepiness -= 1 if pet.sleepiness > 0
-    when 'cleaning'
-      pet.interest -= 1 if pet.interest > 0
-      pet.purity = timer.max_purity
-    when 'looking'
-      pet.interest -= 1 if pet.interest > 0
-      pet.stomach -= 1 if pet.stomach > 0
-      pet.sleepiness -= 1 if pet.sleepiness > 0
-      pet.intelect -= 1 if pet.intelect > 0
-      pet.purity -= 1 if pet.purity > 0
-      pet.hp -= 1 if pet.hp > 0
-    when 'walking'
-      pet.interest += 1 if pet.interest <= timer.max_interest
-      pet.stomach -= 1 if pet.stomach > 0
-      pet.purity -= 1 if pet.purity > 0
-      timer.random_actions(pet, 'walking', timer)
-    when 'sleeping'
-      pet.interest -= 1 if pet.interest > 0
-      pet.stomach -= 1 if pet.stomach > 0
-      pet.sleepiness = timer.max_sleepiness
-      pet.intelect -= 1 if rand(1..3) == 2 && pet.intelect > 0
-      pet.purity -= 1 if pet.purity > 0
-    when 'power_up'
-      pet.intelect += 1 if pet.intelect <= timer.max_intelect
-      pet.stomach -= 1 if pet.stomach > 0
-    end
-  end
+
   def endings(pet)
     ending_title(pet, 'die') if pet.hp == 0
-
   end
 
   def random_actions(pet, actions, timer)
@@ -166,10 +182,10 @@ class Timer
     when 'walking'
       case situation
       when 1
-        pet.stomach -=3 if pet.stomach > 3
+        pet.stomach -= 3 if pet.stomach > 3
         pet.stomach = 0 if pet.stomach < 3
         pet.hp -= 1
-        puts "When you walking your pet found trash and eat it. It's hart...."
+        puts "When you walking your pet found trash and eat it. It's hurts...."
       when 3
         pet.stomach += 3
         pet.stomach = timer.max_stomach if pet.stomach < timer.max_stomach - 3
@@ -180,6 +196,36 @@ class Timer
         pet.hp = timer.max_hp
         puts "During your walkin #{pet.name} breathed freash air and it feel nice"
       end
+    when 'power_up'
+      puts situation
+      case situation
+      when 1
+        pet.hp -= 2
+        puts "When you trained your pet, you were inattentive. It hurts .... "
+      when 3
+        pet.intelect += 1 if pet.intelect <= timer.max_intelect - 1
+        pet.hp += 1 if pet.hp != timer.max_hp - 1
+        puts "Your training is successful. Get extra bonus"
+      when 5
+        pet.intelect += 2 if pet.intelect <= timer.max_intelect  - 3
+        pet.hp += 2 if pet.hp != timer.max_hp - 2
+        puts "Your training is very successful. Get mega bonus"
+      end
+    when 'playing'
+      case
+    when 1
+      pet.hp -= 2
+      puts "When you play with your pet, you were inattentive. It hurts .... "
+    when 3
+      pet.intelect += 1 if pet.intelect <= timer.max_intelect - 1
+      pet.hp += 1 if pet.hp != timer.max_hp - 1
+      puts "Your playing is successful. Get extra bonus"
+      when 5
+      pet.interest +=1 if pet.interest <= timer.max_interest - 2
+      pet.intelect += 1 if pet.intelect <= timer.max_intelect  - 2
+      pet.hp += 2 if pet.hp != timer.max_hp - 2
+      puts "Your playing is very successful. Get mega bonus"
+    end
     end
   end
 
@@ -214,6 +260,45 @@ class Timer
 
     else
       'Evening'
+    end
+  end
+
+  def status_counting(pet, timer, action)
+    case action
+    when 'healing'
+      pet.stomach += 1 if pet.stomach <= timer.max_stomach
+      pet.hp += rand(0..1) if pet.hp != timer.max_hp
+      pet.sleepiness -= 1 if pet.sleepiness > 0
+    when 'playing'
+      pet.interest += 1 if pet.interest <= timer.max_interest
+      pet.stomach -= 1 if pet.stomach > 0
+      pet.sleepiness -= 1 if pet.sleepiness > 0
+      timer.random_actions(pet, 'playing', timer)
+    when 'cleaning'
+      pet.interest -= 1 if pet.interest > 0
+      pet.purity = timer.max_purity
+    when 'looking'
+      pet.interest -= 1 if pet.interest > 0
+      pet.stomach -= 1 if pet.stomach > 0
+      pet.sleepiness -= 1 if pet.sleepiness > 0
+      pet.intelect -= 1 if pet.intelect > 0
+      pet.purity -= 1 if pet.purity > 0
+      pet.hp -= 1 if pet.hp > 0
+    when 'walking'
+      pet.interest += 1 if pet.interest <= timer.max_interest
+      pet.stomach -= 1 if pet.stomach > 0
+      pet.purity -= 1 if pet.purity > 0
+      timer.random_actions(pet, 'walking', timer)
+    when 'sleeping'
+      pet.interest -= 1 if pet.interest > 0
+      pet.stomach -= 1 if pet.stomach > 0
+      pet.sleepiness = timer.max_sleepiness
+      pet.intelect -= 1 if rand(1..3) == 2 && pet.intelect > 0
+      pet.purity -= 1 if pet.purity > 0
+    when 'power_up'
+      pet.intelect += 1 if pet.intelect <= timer.max_intelect
+      pet.stomach -= 1 if pet.stomach > 0
+      timer.random_actions(pet, 'power_up', timer)
     end
   end
 
@@ -278,34 +363,23 @@ def start_game
   timer = Timer.new(1)
   puts " #{pet.render}"
   puts "#{pet.name} say #{pet.voice}"
-  status(pet, timer)
-  game(pet, timer)
-end
-
-def status(pet, timer)
   puts " #{pet.name}  status
 Time = #{timer.day_period}
 ---------------------------------------------
 |hp| = #{pet.hp}     |stomach| = #{pet.stomach}    |purity| = #{pet.purity}
 |interes| = #{pet.interest} |sleepiness| = #{pet.sleepiness} |intelect| = #{pet.intelect}
 --------------------------------------------- "
-  puts danger_notification(pet).to_s
+  game(pet, timer)
 end
 
-def danger_notification(pet)
-  puts "#{pet.name} hp is #{pet.hp} and it's to low. Feed #{pet.name}" if pet.hp < 2
-  puts "#{pet.name} stomach is #{pet.stomach} and it's to low. Feed #{pet.name}" if pet.stomach < 2
-  puts "#{pet.name} purity is #{pet.purity} and it's to low. Wash #{pet.name}" if pet.purity < 2
-  puts "#{pet.name} interest is #{pet.interest} and it's to low. Play or walk with #{pet.name} " if pet.interest < 3
-  puts "#{pet.name} sleepiness is #{pet.sleepiness} and it's to low. #{pet.name} need a rest " if pet.sleepiness < 1
-  puts "#{pet.name} intelect is #{pet.intelect} and it's to low. Train #{pet.name}" if pet.intelect < 2
-end
+
 
 def game(pet, timer)
+
   timer.endings(pet)
   timer.danger_moments (pet)
-  dayli(pet, timer) unless timer.finish_game
-  game(pet, timer) unless timer.finish_game
+  dayli(pet, timer)
+  game(pet, timer)
 end
 
 start_game
