@@ -455,16 +455,59 @@ l l_/ /l l_/ / |___| |l l
 end
 
 # start game--------------------------------------
+def help_output(pet, timer)
+
+  puts"
+          |------------------------------------------------HELP-----------------------------------------------|
+          |                     To get out press ENTER                                                        |
+          |                                                                                                   |
+          |-COMANDS:                                                                                          |
+          | if you chose                                                                                      |
+          | *(play)[interest + 1; stomach - 1; sleepiness -= 1] Starting event where you play with you pet.   |
+          |     Be wary it's 10% chance of failure                                                            |
+          | *(feed)[ stomach + 1; sleepiness -= 1] Starting event where you feed you pet.                     |
+          |     It's 50% chance of +1 hp                                                                      |
+          | *(wash)[ interest - 1; purity = max] Starting event where you wash you pet.                       |
+          | *(walk)[ interest + 1; purity -= 1 ;stomach - 1] Starting event where you walking with pet.       |
+          |     when pet intelect < 2                                                                         |
+          |         -20% [stomach - 3; hp - 1] 20%[stomach + 2; hp + 1] 20%[stomach max; hp max]              |
+          |     when pet 2 < intelect < 4                                                                     |
+          |         - 33%[stomach + 2; hp + 1] 33%[stomach max; hp max]                                       |
+          |     when pet intelect > 4                                                                         |
+          |         - 50%[stomach max; hp max]                                                                |
+          | *(train)[ intelect + 1; stomach - 1] Starting event where you train the pet.                      |
+          |         20% [ hp - 2] 20%[intelect + 2; hp + 1] 20%[intelect + 2; hp + 2]                         |
+          | *(look_at)[ all stat -1] Starting event where you killing pet.                                    |
+          | *(put_to_sleep)[ sleepiness max; interest - 1; stomach - 1;] Active only at night.                |
+          |         Starting event where you pet rest and skip day.                                           |
+          |         It's 33% to intelect -1                                                                   |
+          |                                                                                                   |
+          | ELSE:                                                                                             |
+          | - When purity or stomach = 0 every day hp -1                                                      |
+          | - When intelect or interest < 2 pet can run away                                                  |
+          |                                                                                                   |
+          |To get out press ENTER                                                                             |
+          |----------------------------------------------------------------------------------------------------
+"
+  esc_b = gets.chomp
+  timer.danger_moments(pet)
+  dayli(pet, timer)
+  game(pet, timer)
+
+
+
+end
+
 
 def dayli(pet, timer)
   if timer.day_time != 3 && $game_over != true
     puts "
 
  Chose what you wanna do
-1.feed             5.walk
-2.play             6.train
-3.wash            
-4.look at(nothing)
+1.feed             4.look at(nothing)
+2.play             5.walk
+3.wash             6.train
+          7.HELP
 Comand: "
     input_action = gets.chomp.to_f
     case input_action
@@ -480,7 +523,11 @@ Comand: "
       pet.walk(pet, timer)
     when 6
       pet.train(pet, timer)
-      else
+    when 7
+      help_output(pet, timer)
+    when input_action <=>'help'
+      help_output(pet, timer)
+    else
         pet.out_stat(pet, timer)
       puts "    !!!!!!!!!!!!!!!!!!!!!!!!
     !! Type corect number !!
@@ -492,12 +539,14 @@ Comand: "
     puts "
 Its to late you can only sleep
         1.put_to_sleep
+        7.HELP
 
 Comand: "
     input_action = gets.chomp.to_f
     if input_action == 1
       pet.put_to_sleep(pet, timer)
-    else
+    elsif input_action == 'help'
+      help_output(pet, timer)
       pet.out_stat(pet, timer)
       puts " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  !!Its to late you can only sleep!!
