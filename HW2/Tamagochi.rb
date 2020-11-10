@@ -182,6 +182,9 @@ class Pet
   def geme_over(pet, timer)
     timer.endings(pet, timer, 'die') if over?
   end
+  def after_h(pet, timer)
+    status(pet, timer)
+  end
 
   private
 
@@ -224,12 +227,12 @@ class Pet
 
   def status(pet, timer)
     system "clear" or system "cls"
+    puts "#{pet.render}"
     danger_notification(pet)
     puts"---------------------------------------------------
 #{$notification_event}
 #{$notification_action}"
-    puts "
-         #{pet.render}
+   puts "
 #{pet.name}  status
 
 Time = #{timer.day_period}
@@ -456,7 +459,7 @@ end
 
 # start game--------------------------------------
 def help_output(pet, timer)
-
+  system "clear" or system "cls"
   puts"
           |------------------------------------------------HELP-----------------------------------------------|
           |                     To get out press ENTER                                                        |
@@ -490,9 +493,12 @@ def help_output(pet, timer)
           |----------------------------------------------------------------------------------------------------
 "
   esc_b = gets.chomp
-  timer.danger_moments(pet)
-  dayli(pet, timer)
+  system "clear" or system "cls"
+  pet.after_h(pet, timer)
   game(pet, timer)
+
+
+
 
 
 
@@ -507,10 +513,10 @@ def dayli(pet, timer)
 1.feed             4.look at(nothing)
 2.play             5.walk
 3.wash             6.train
-          7.HELP
+ 7.HELP or put help or h
 Comand: "
-    input_action = gets.chomp.to_f
-    case input_action
+    input_action = gets.chomp
+    case input_action.to_f
     when 1
       pet.feed(pet, timer)
     when 2
@@ -525,36 +531,39 @@ Comand: "
       pet.train(pet, timer)
     when 7
       help_output(pet, timer)
-    when input_action <=>'help'
-      help_output(pet, timer)
     else
+      if input_action.delete(' ') == 'help' or input_action.delete(' ') == 'h'
+        help_output(pet, timer)
+      else
         pet.out_stat(pet, timer)
       puts "    !!!!!!!!!!!!!!!!!!!!!!!!
     !! Type corect number !!
     !!!!!!!!!!!!!!!!!!!!!!!!".bg_red.black
       dayli(pet, timer)
-    end
+      end
+      end
   elsif  $game_over != true
 
     puts "
 Its to late you can only sleep
         1.put_to_sleep
-        7.HELP
+        7.HELP or put help or h'
 
 Comand: "
-    input_action = gets.chomp.to_f
-    if input_action == 1
-      pet.put_to_sleep(pet, timer)
-    elsif input_action == 'help'
+    input_action = gets.chomp
+    if  input_action.delete(' ') == 'help' or input_action.delete(' ') == 'h'
       help_output(pet, timer)
+    elsif input_action.to_f == 1
+      pet.put_to_sleep(pet, timer)
+    else
       pet.out_stat(pet, timer)
       puts " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  !!Its to late you can only sleep!!
  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!".bg_red.black
     end
   end
+  end
 
-end
 
 def start_game
   $game_over = false
