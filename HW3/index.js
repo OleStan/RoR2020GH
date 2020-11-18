@@ -15,8 +15,8 @@ var  button7 = document.getElementById("7");
 
 /*-----hide click----------------------------------------------*/
 button1.addEventListener("click",function (event) {
-    console.log("click");
-
+    console.log("click")
+    document.write('1')
 });
 
 

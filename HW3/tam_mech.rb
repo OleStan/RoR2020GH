@@ -380,7 +380,7 @@ l l_/ /l l_/ / |___| |l l
 end
 
 # start game--------------------------------------
-def help_output(pet, timer)
+def help_output(pet, timer, a)
   system 'clear' or system 'cls'
   puts "
           |------------------------------------------------HELP-----------------------------------------------|
@@ -421,7 +421,7 @@ def help_output(pet, timer)
   game(pet, timer, a)
 end
 
-def dayli(pet, timer)
+def dayli(pet, timer, a)
   if timer.day_time != 3 && $game_over != true
     $chose = "
 
@@ -450,20 +450,20 @@ Comand: "
     when 4
       pet.look_at(pet, timer)
     when 5
-      pet.walk(pet, timer, a)
+      pet.walk(pet, timer)
     when 6
       pet.train(pet, timer)
     when 7
-      help_output(pet, timer)
+      help_output(pet, timer, a)
     else
       if (input_action.delete(' ') == 'help') || (input_action.delete(' ') == 'h')
-        help_output(pet, timer)
+        help_output(pet, timer, a)
       else
         pet.out_stat(pet, timer)
         puts "    !!!!!!!!!!!!!!!!!!!!!!!!
     !! Type corect number !!
     !!!!!!!!!!!!!!!!!!!!!!!!"
-        dayli(pet, timer)
+        dayli(pet, timer, a)
       end
     end
   elsif $game_over != true
@@ -482,7 +482,7 @@ Its to late you can only sleep
 Comand: "
     input_action = gets.chomp
     if (input_action.delete(' ') == 'help') || (input_action.delete(' ') == 'h')
-      help_output(pet, timer)
+      help_output(pet, timer, a)
     elsif input_action.to_f == 1
       pet.put_to_sleep(pet, timer)
     else
@@ -520,7 +520,7 @@ def game(pet, timer, a)
   pet.geme_over(pet, timer, a)
   unless $game_over
     timer.danger_moments(pet)
-    dayli(pet, timer)
+    dayli(pet, timer, a)
     game(pet, timer, a)
   end
 end
