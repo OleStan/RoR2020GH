@@ -1,15 +1,16 @@
 ---
-methods_sadmin:
+methods:
   Role: admin
   Password: 1234
   Email: 1234@gmail.com
   Pet:
     type: dog
     status:
-      day: 1
+      day: 1.0
+      name: pet
       hp: 6
       interest: 5
       stomach: 4
       sleepines: 3
       intelect: 6
-      purity: 5
+      purity: 4

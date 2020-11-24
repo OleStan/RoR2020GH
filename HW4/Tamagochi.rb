@@ -1,5 +1,8 @@
 # frozen_string_literal: true
+
 require_relative 'user_aunt'
+require_relative 'pet'
+require_relative 'timer'
 require 'yaml'
 class String
   def black
@@ -86,434 +89,11 @@ class String
     "\e[7m#{self}\e[27m"
   end
 end
-class Pet
-  attr_accessor :animal, :name, :stomach, :hp, :interest, :sleepiness, :intelect, :purity
-
-  def initialize(animal, name, stomach, hp, interest, sleepiness, intelect, purity)
-    @animal = animal
-
-    @name = name
-    @hp = hp
-    @interest = interest
-    @stomach = stomach
-    @sleepiness = sleepiness
-    @intelect = intelect
-    @purity = purity
-    $notification_event = ''
-    $notification_action = ''
-  end
-
-  def render
-    case @animal
-    when 'dog'
-    "         ,
-            |`-.__
-            / ' _/
-           ****`
-          /    }
-         /  1 /
-     1 /`   lll
-     `l     /_ll
-       `~~~~~``~`"
-    when 'cat'
-      "       _
-       l`*-.
-        )  _`-.
-       .  : `. .
-       : _   '  l
-       ; *` _.   `*-._
-       `-.-'          `-.
-         ;       `       `.
-         :.       .        l
-         . l  .   :   .-'   .
-         '  `+.;  ;  '      :
-         :  '  |    ;       ;-.
-         ; '   : :`-:     _.`* ;
-       .*' /  .*' ; .*`- +'  `*'
-      `*-*   `*-*  `*-*'
-      "
-    when 'hamster'
-      "           .     .
-            (>l---/<)
-            ,'     `.
-           /  q   p  l
-          (  >(_Y_)<  )
-           >-' `-' `-<-.
-          /  _.== ,=.,- l
-         /,    )`  '(    )
-        ; `._.'      `--<
-       :     l        |  )
-       l      )       ;_/  hjw
-        `._ _/_  ___.'-lll
-           `--lll
-      "
-  end
-  end
-  def voice
-    case @animal
-    when 'cat'
-      'meow'
-    when 'dog'
-      'bark'
-    when 'hamster'
-      'pee-pee'
-    else 'hello'
-    end
-  end
-
-  # action------------------------------------------
-  def feed(pet, timer)
-    timer.day_time += 1
-    $notification_action = "You feed #{pet.name} and now #{timer.day_period}"
-    timer.status_counting(pet, timer, 'healing')
-    status(pet, timer)
-  end
-
-  def play(pet, timer)
-    timer.day_time += 1
-    $notification_action = "You play with #{pet.name} and now #{timer.day_period}"
-    timer.status_counting(pet, timer, 'playing')
-    status(pet, timer)
-  end
-
-  def wash(pet, timer)
-    timer.day_time += 1
-    $notification_action = "You wash #{pet.name} and now #{timer.day_period}"
-    timer.status_counting(pet, timer, 'cleaning')
-    status(pet, timer)
-  end
-
-  def look_at(pet, timer)
-    timer.day_time += 1
-    $notification_action = "You just look at #{pet.name} and now #{timer.day_period}"
-    timer.status_counting(pet, timer, 'looking')
-    status(pet, timer)
-  end
-
-  def walk(pet, timer)
-    timer.day_time += 1
-    $notification_action = "You walk with #{pet.name} and now #{timer.day_period}"
-    timer.status_counting(pet, timer, 'walking')
-    status(pet, timer)
-    timer.endings(pet, timer, 'disappear_b') if interest? && rand(1..10) == 3
-    timer.endings(pet, timer, 'disappear_s') if stupid? && rand(1..10) == 4
-  end
-
-  def put_to_sleep(pet, timer)
-    timer.day_time = 1
-    $notification_action = "You put sleep #{pet.name} and now #{timer.day_period}"
-    timer.status_counting(pet, timer, 'sleeping')
-    status(pet, timer)
-  end
-
-  def train(pet, timer)
-    timer.day_time += 1
-    $notification_action = "You train #{pet.name} and now #{timer.day_period}"
-    timer.status_counting(pet, timer, 'power_up')
-    status(pet, timer)
-  end
-  def out_stat(pet, timer)
-    status(pet, timer)
-  end
-  def geme_over(pet, timer)
-    timer.endings(pet, timer, 'die') if over?
-  end
-  def after_h(pet, timer)
-    status(pet, timer)
-  end
-
-  private
-
-  def over?
-    @hp <= 0
-  end
-
-  def hungry?
-    @stomach <= 2
-  end
-
-  def ill?
-    @hp <= 2
-  end
-
-  def dirty?
-    @purity <= 2
-  end
-
-  def interest?
-    @interest <= 3
-  end
-
-  def stupid?
-    @intelect <= 2
-  end
-
-  def sleepy?
-    @sleepiness <= 1
-  end
-
-  def danger_notification(pet)
-    puts "#{pet.name} hp is #{pet.hp} and it's to low. Feed #{pet.name}".red if ill?
-    puts "#{pet.name} stomach is #{pet.stomach} and it's to low. Feed #{pet.name}".red if hungry?
-    puts "#{pet.name} purity is #{pet.purity} and it's to low. Wash #{pet.name}".red if dirty?
-    puts "#{pet.name} interest is #{pet.interest} and it's to low. Play or walk with #{pet.name} ".red if interest?
-    puts "#{pet.name} sleepiness is #{pet.sleepiness} and it's to low. #{pet.name} need a rest ".red if sleepy?
-    puts "#{pet.name} intelect is #{pet.intelect} and it's to low. Train #{pet.name}".red if stupid?
-  end
-
-  def status(pet, timer)
-    system "clear" or system "cls"
-    puts "#{pet.render}"
-    danger_notification(pet)
-    puts"---------------------------------------------------
-#{$notification_event}
-#{$notification_action}"
-   puts "
-#{pet.name}  status
-
-Time = #{timer.day_period}
-----------------------------------------------------------
-|  hp   | = #{pet.hp} / #{timer.max_hp}  |  stomach | = #{pet.stomach} / #{timer.max_stomach} | purity | = #{pet.purity} / #{timer.max_purity}
-|interes| = #{pet.interest} / #{timer.max_interest}  |sleepiness| = #{pet.sleepiness} / #{timer.max_sleepiness} |intelect| = #{pet.intelect} / #{timer.max_intelect}
----------------------------------------------------------- ".cyan
-  end
-end
-
-class Timer
-  attr_accessor :day_time, :game_over
-  attr_reader :max_hp, :max_interest, :max_stomach, :max_sleepiness, :max_intelect, :max_purity, :finish_game
-
-  def initialize(day_time, pet)
-    @day_time = day_time.to_f
-    @day_count = 0
-    case  pet.animal
-    when    'dog'
-    @max_hp = 6
-    @max_interest = 5
-    @max_stomach = 4
-    @max_sleepiness = 3
-    @max_intelect = 6
-    @max_purity = 4
-    when    'cat'
-    @max_hp = 9
-    @max_interest = 4
-    @max_stomach = 4
-    @max_sleepiness = 3
-    @max_intelect = 6
-    @max_purity = 7
-    when 'hamster'
-    @max_hp = 4
-    @max_interest = 3
-    @max_stomach = 4
-    @max_sleepiness = 3
-    @max_intelect = 3
-    @max_purity = 3
-    end
-  end
-
-  def endings(pet, timer, reason)
-    $game_over = true
-    case reason
-    when 'die'
-
-      timer.ending_title(pet, timer, 'die')
-    when 'disappear_b'
-
-      timer.ending_title(pet, timer, 'disappear_b')
-    when 'disappear_s'
-
-      timer.ending_title(pet, timer, 'disappear_s')
-    else # type code here
-    end
-  end
-
-  def random_actions(pet, actions, timer)
-    case actions
-    when 'walking'
-      random_event(pet, timer, 'walking', rand(1..5)) if pet.intelect < 2
-      random_event(pet, timer, 'walking', rand(3..5)) if pet.intelect >= 2 && pet.intelect <= 4
-      random_event(pet, timer, 'walking', rand(4..5)) if pet.intelect > 4
-    when 'power_up'
-      random_event(pet, timer, 'power_up', rand(1..5))
-    when 'playing'
-      random_event(pet, timer, 'playing', rand(1..5))
-    else # type code here
-    end
-  end
-
-  def random_event(pet, timer, action, situation)
-    case action
-    when 'walking'
-      case situation
-      when 1
-        pet.stomach -= 3 if pet.stomach > 3
-        pet.stomach = 0 if pet.stomach < 3
-        pet.hp -= 1
-        $notification_event = "When you walking your pet found trash and eat it. It's hurts....(-3 stomach and -1 hp)".bg_brown.black.italic
-      when 3
-        pet.stomach += 2
-        pet.stomach = timer.max_stomach if pet.stomach < timer.max_stomach - 3
-        pet.hp += 1 if pet.hp != timer.max_hp
-        $notification_event = 'When you walking your pet normal food. Next time be careful you may catch something dangerous
-(+2 stomach and +1 hp)'.bg_brown.black.italic
-      when 5
-        pet.stomach = timer.max_stomach
-        pet.hp = timer.max_hp
-        $notification_event = "During your walkin #{pet.name} breathed freash air and it feel nice(max stomach and max hp)".bg_brown.black.italic
-      end
-    when 'power_up'
-
-      case situation
-      when 1
-        pet.hp -= 2
-        $notification_event = 'When you trained your pet, you were inattentive. It hurts .... ( -2 hp)'.bg_brown.black.italic
-      when 3
-        pet.intelect += 1 if pet.intelect <= timer.max_intelect - 1
-        pet.hp += 1 if pet.hp != timer.max_hp - 1
-        $notification_event = 'Your training is successful. Get extra bonus(+1 intelect and +1 hp)'.bg_brown.black.italic
-      when 5
-        pet.intelect += 2 if pet.intelect <= timer.max_intelect - 3
-        pet.hp += 2 if pet.hp != timer.max_hp - 2
-        $notification_event = 'Your training is very successful. Get mega bonus(+2 intelect and +2 hp)'.bg_brown.black.italic
-      end
-    when 'playing'
-      if 1
-        pet.hp -= 2
-        $notification_event = 'When you play with your pet, you were inattentive. It hurts .... (-2 hp)'.bg_brown.black.italic
-      elsif 3
-        pet.intelect += 1 if pet.intelect <= timer.max_intelect - 1
-        pet.hp += 1 if pet.hp != timer.max_hp - 1
-        $notification_event = 'Your playing is successful. Get extra bonus(+1 intelect and +1 hp)'.bg_brown.black.italic
-      elsif 5
-        pet.interest += 1 if pet.interest <= timer.max_interest - 2
-        pet.intelect += 1 if pet.intelect <= timer.max_intelect - 2
-        pet.hp += 2 if pet.hp != timer.max_hp - 2
-        $notification_event = 'Your playing is very successful. Get mega bonus(+ 1 interest and +1 intelect and +1 hp)'.bg_brown.black.italic
-      end
-    end
-  end
-
-  def ending_title(pet, _timer, reason)
-    case reason
-    when 'die'
-
-      if $game_over
-        puts "#{pet.name} die
-      ,-=-.
-     /  +  l
-     | ~~~ |
-     |R.I.P|
-     |_____|
-".magenta
-      end
-
-    when 'disappear_b'
-
-      if $game_over
-        puts " On walkink #{pet.name} get away because it bored
- _____   ___  ___  ___ _____
-|  __ l / _ l |  l/  ||  ___|
-| |  l// /_l l| .  . || |__
-| | __ |  _  || |l/| ||  __|
-| |_l l| | | || |  | || |___
- l____/l_| |_/l_|  |_/l____/
-
-
- _____  _   _ ___________
-|  _  || | | |  ___| ___ l
-| | | || | | | |__ | |_/ /
-| | | || | | |  __||    /
-l l_/ /l l_/ / |___| |l l
- l___/  l___/l____/l_| l_|
-".magenta
-      end
-
-    when 'disappear_s'
-
-      if $game_over
-        puts " On walkink #{pet.name} lost because it stupid
- _____   ___  ___  ___ _____
-|  __ l / _ l |  l/  ||  ___|
-| |  l// /_l l| .  . || |__
-| | __ |  _  || |l/| ||  __|
-| |_l l| | | || |  | || |___
- l____/l_| |_/l_|  |_/l____/
-
-
- _____  _   _ ___________
-|  _  || | | |  ___| ___ l
-| | | || | | | |__ | |_/ /
-| | | || | | |  __||    /
-l l_/ /l l_/ / |___| |l l
- l___/  l___/l____/l_| l_|
-".magenta
-      end
-
-    end
-  end
-
-  def danger_moments(pet)
-    pet.hp -= 1 if pet.purity.zero?
-    pet.hp -= 1 if pet.stomach.zero?
-  end
-
-  def day_period
-    case @day_time
-    when 1
-      'Morning'
-
-    when 2
-      'Noonday'
-
-    else
-      'Evening'
-    end
-  end
-
-  def status_counting(pet, timer, action)
-    case action
-    when 'healing'
-      pet.stomach += 1 if pet.stomach <= timer.max_stomach
-      pet.hp += rand(0..1) if pet.hp != timer.max_hp
-      pet.sleepiness -= 1 if pet.sleepiness.positive?
-    when 'playing'
-      pet.interest += 1 if pet.interest <= timer.max_interest
-      pet.stomach -= 1 if pet.stomach.positive?
-      pet.sleepiness -= 1 if pet.sleepiness.positive?
-      timer.random_actions(pet, 'playing', timer)
-    when 'cleaning'
-      pet.interest -= 1 if pet.interest.positive?
-      pet.purity = timer.max_purity
-    when 'looking'
-      pet.interest -= 1 if pet.interest.positive?
-      pet.stomach -= 1 if pet.stomach.positive?
-      pet.sleepiness -= 1 if pet.sleepiness.positive?
-      pet.intelect -= 1 if pet.intelect.positive?
-      pet.purity -= 1 if pet.purity.positive?
-      pet.hp -= 1 if pet.hp.positive?
-    when 'walking'
-      pet.interest += 1 if pet.interest <= timer.max_interest
-      pet.stomach -= 1 if pet.stomach.positive?
-      pet.purity -= 1 if pet.purity.positive?
-      timer.random_actions(pet, 'walking', timer)
-    when 'sleeping'
-      pet.interest -= 1 if pet.interest.positive?
-      pet.stomach -= 1 if pet.stomach.positive?
-      pet.sleepiness = timer.max_sleepiness
-      pet.intelect -= 1 if rand(1..3) == 2 && pet.intelect.positive?
-      pet.purity -= 1 if pet.purity.positive?
-    when 'power_up'
-      pet.intelect += 1 if pet.intelect <= timer.max_intelect
-      pet.stomach -= 1 if pet.stomach.positive?
-      timer.random_actions(pet, 'power_up', timer)
-    end
-  end
-end
 
 # start game--------------------------------------
-def help_output(pet, timer)
-  system "clear" or system "cls"
-  puts"
+def help_output(pet, timer, acc, role)
+  system 'clear' or system 'cls'
+  puts "
           |------------------------------------------------HELP-----------------------------------------------|
           |                     To get out press ENTER                                                        |
           |                                                                                                   |
@@ -546,19 +126,52 @@ def help_output(pet, timer)
           |----------------------------------------------------------------------------------------------------
 "
   esc_b = gets.chomp
-  system "clear" or system "cls"
+  system 'clear' or system 'cls'
   pet.after_h(pet, timer)
-  game(pet, timer)
-
-
-
-
-
-
+  game(pet, timer, acc, role)
 end
 
+def super_admin_panel(pet, timer, acc, choise)
+  case choise
+  when 1
+    acc.change_ptype(pet, timer, acc)
+  when 2
+    acc.change_pname(pet, timer, acc)
+  when 3
+    pet.hp = -2
+  when 4
+    to_def(pet, timer, acc)
+  when 5
+    acc.change_pstatus(pet, timer, acc)
+  end
+  system 'clear' or system 'cls'
+  pet.after_h(pet, timer)
+end
 
-def dayli(pet, timer)
+def admin_panel(pet, timer, acc, choise)
+  case choise
+  when 1
+    acc.change_ptype(pet, timer, acc)
+  when 2
+    acc.change_pname(pet, timer, acc)
+  end
+
+  system 'clear' or system 'cls'
+  pet.after_h(pet, timer)
+end
+
+def to_def(pet, timer, acc)
+  pet.hp = timer.max_hp
+  pet.interest = timer.max_interest
+  pet.stomach = timer.max_stomach
+  pet.sleepiness = timer.max_sleepiness
+  pet.intelect = timer.max_intelect
+  pet.purity = timer.max_purity
+  acc.safe_progres_a(pet, timer)
+end
+
+def dayli(pet, timer, acc, role)
+  puts "You are #{role}. Enter 8 to open #{role} panel" if (role == 'super_admin') || (role == 'admin')
   if timer.day_time != 3 && $game_over != true
     puts "
 
@@ -583,18 +196,43 @@ Comand: "
     when 6
       pet.train(pet, timer)
     when 7
-      help_output(pet, timer)
-    else
-      if input_action.delete(' ') == 'help' or input_action.delete(' ') == 'h'
-        help_output(pet, timer)
+      help_output(pet, timer, acc, role)
+    when 8
+      system 'clear' or system 'cls'
+      case role
+      when 'super_admin'
+        puts "
+             1. change pet type
+             2. change pet name
+             3. kill pet
+             4. reset to defolt
+             5. change pet status
+skip enter"
+        super_admin_panel(pet, timer, acc, gets.chomp.to_i)
+      when "admin"
+        puts "
+             1. change pet type
+             2. change pet name
+skip enter"
+        admin_panel(pet, timer, acc, gets.chomp.to_i)
       else
         pet.out_stat(pet, timer)
-      puts "    !!!!!!!!!!!!!!!!!!!!!!!!
+        puts "    !!!!!!!!!!!!!!!!!!!!!!!!
     !! Type corect number !!
     !!!!!!!!!!!!!!!!!!!!!!!!".bg_red.black
-      dayli(pet, timer)
+        dayli(pet, timer, acc, role)
       end
+    else
+      if (input_action.delete(' ') == 'help') || (input_action.delete(' ') == 'h')
+        help_output(pet, timer, acc, role)
+      else
+        pet.out_stat(pet, timer)
+        puts "    !!!!!!!!!!!!!!!!!!!!!!!!
+    !! Type corect number !!
+    !!!!!!!!!!!!!!!!!!!!!!!!".bg_red.black
+        dayli(pet, timer, acc, role)
       end
+    end
   elsif  $game_over != true
 
     puts "
@@ -604,8 +242,8 @@ Its to late you can only sleep
 
 Comand: "
     input_action = gets.chomp
-    if  input_action.delete(' ') == 'help' or input_action.delete(' ') == 'h'
-      help_output(pet, timer)
+    if (input_action.delete(' ') == 'help') || (input_action.delete(' ') == 'h')
+      help_output(pet, timer, acc, role)
     elsif input_action.to_f == 1
       pet.put_to_sleep(pet, timer)
     else
@@ -615,11 +253,11 @@ Comand: "
  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!".bg_red.black
     end
   end
-  end
+end
 
-
-def start_game (acc, pet, timer)
+def start_game(acc, pet, timer)
   $game_over = false
+  role = acc.data['methods']['Role']
   puts " #{pet.render}"
   puts "#{pet.name} #{pet.voice}s : Hello!"
   puts " #{pet.name}  status
@@ -629,121 +267,116 @@ Time = #{timer.day_period}
 |interes| = #{pet.interest} / #{timer.max_interest}  |sleepiness| = #{pet.sleepiness} / #{timer.max_sleepiness} |intelect| = #{pet.intelect} / #{timer.max_intelect}
 ---------------------------------------------------------- ".cyan
 
-  game(pet, timer)
+  game(pet, timer, acc, role)
 end
 
-def game(pet, timer)
-
+def game(pet, timer, acc, role)
+  case role
+  when "super_admin"
+    acc.safe_progres_sa(pet, timer)
+  when "admin"
+    acc.safe_progres_a(pet, timer)
+  else
+    acc.safe_progres_u(pet, timer, $login)
+  end
   pet.geme_over(pet, timer)
   unless $game_over
     timer.danger_moments(pet)
-    dayli(pet, timer)
-    game(pet, timer)
+    dayli(pet, timer, acc, role)
+    game(pet, timer, acc, role)
   end
 end
 
 def authorization
-  puts'Enter your login'
+  puts 'Enter your login'
   $login = gets.chomp
-  puts'Enter your password'
+  puts 'Enter your password'
   $pass = gets.chomp
 end
+
 def register
   case gets.chomp.to_i
   when 1
-    print "puts you login:"
+    print 'puts you login:'
     $login = gets.chomp
-    print "puts you password:"
+    print 'puts you password:'
     $pass = gets.chomp
-    print "puts you pet name:"
+    print 'puts you pet name:'
     name = gets.chomp
-    print "puts you pet type:"
-    type = gets.chomp
-    acc = UserAunt.new("user")
+    print "chose you pet type:
+      1 for dog
+      2 for cat
+      3 for hamster"
+    case gets.chomp.to_f
+    when 1
+      anim = "dog"
+    when 2
+      anim = 'cat'
+    when 3
+      anim = 'hamster'
+    else
+      puts "enter corect number"
+      change_ptype(pet, timer, acc)
+    end
+    type = anim
+    acc = UserAunt.new('user')
     data = acc.data
-    stomach = data["methods"]["Pet"]["status"]["stomach"]
-    hp = data["methods"]["Pet"]["status"]["hp"]
-    interest = data["methods"]["Pet"]["status"]["interest"]
-    sleepines = data["methods"]["Pet"]["status"]["sleepines"]
-    intelect = data["methods"]["Pet"]["status"]["intelect"]
-    purity = data["methods"]["Pet"]["status"]["purity"]
+    stomach = data['methods']['Pet']['status']['stomach']
+    hp = data['methods']['Pet']['status']['hp']
+    interest = data['methods']['Pet']['status']['interest']
+    sleepines = data['methods']['Pet']['status']['sleepines']
+    intelect = data['methods']['Pet']['status']['intelect']
+    purity = data['methods']['Pet']['status']['purity']
     pet = Pet.new(type, name, stomach, hp, interest, sleepines, intelect, purity)
-    timer = Timer.new(data["methods"]["Pet"]["status"]["day"], pet)
+    timer = Timer.new(data['methods']['Pet']['status']['day'], pet)
     acc.create_u(pet, timer, $login, name, type, $pass)
-    start_game(acc, pet, timer)
+
   when 2
     login_check
     pass_check
-    puts $login
-    acc = UserAunt.new("#{$login}")
-    type = acc.data["methods"]["Pet"]["type"]
-    name = acc.data["methods"]["Pet"]["status"]["name"]
-    stomach = acc.data["methods"]["Pet"]["status"]["stomach"]
-    hp = acc.data["methods"]["Pet"]["status"]["hp"]
-    interest = acc.data["methods"]["Pet"]["status"]["interest"]
-    sleepines = acc.data["methods"]["Pet"]["status"]["sleepines"]
-    intelect = acc.data["methods"]["Pet"]["status"]["intelect"]
-    purity = acc.data["methods"]["Pet"]["status"]["purity"]
+    acc = UserAunt.new($login.to_s)
+    type = acc.data['methods']['Pet']['type']
+    name = acc.data['methods']['Pet']['status']['name']
+    stomach = acc.data['methods']['Pet']['status']['stomach']
+    hp = acc.data['methods']['Pet']['status']['hp']
+    interest = acc.data['methods']['Pet']['status']['interest']
+    sleepines = acc.data['methods']['Pet']['status']['sleepines']
+    intelect = acc.data['methods']['Pet']['status']['intelect']
+    purity = acc.data['methods']['Pet']['status']['purity']
     pet = Pet.new(type, name, stomach, hp, interest, sleepines, intelect, purity)
-    timer = Timer.new(acc.data["methods"]["Pet"]["status"]["day"], pet)
-    start_game(acc, pet, timer)
+    timer = Timer.new(acc.data['methods']['Pet']['status']['day'], pet)
   else
-    puts "try again"
+    puts 'try again'
     register
   end
-end
-def login_check
-  begin
-    print "puts you login:"
-    $login = gets.chomp
-    test_log = YAML.load(File.open("data_server/#{$login}.yml"))
-  rescue
-    puts"No login #{$login}"
-    login_check
-  end
-end
-def pass_check
-    test_pass = YAML.load(File.open("data_server/#{$login}.yml"))
-    print "puts you password:"
-    $pass = gets.chomp
-    unless $pass == test_pass["methods"]["Password"].to_s
-        puts"wrong password try again"
-        pass_check
-    end
+  start_game(acc, pet, timer)
 end
 
+def login_check
+  print 'puts you login:'
+  $login = gets.chomp
+  test_log = YAML.safe_load(File.open("data_server/#{$login}.yml"))
+rescue StandardError
+  puts "No login #{$login}"
+  login_check
+end
+
+def pass_check
+  test_pass = YAML.safe_load(File.open("data_server/#{$login}.yml"))
+  print 'puts you password:'
+  $pass = gets.chomp
+  unless $pass == test_pass['methods']['Password'].to_s
+    puts 'wrong password try again'
+    pass_check
+  end
+end
 
 puts "If you new bay press 1 to registration
 If you have account press 2 to autorisate"
 register
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 puts 'pres ENTER to start new game
                    or
 0 and ENTER to escape '
 enter_button = gets.chomp
-start_game if enter_button != 0
+start_game(acc, pet, timer) if enter_button != 0

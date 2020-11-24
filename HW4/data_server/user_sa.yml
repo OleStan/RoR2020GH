@@ -2,15 +2,15 @@
 methods:
   Role: super_admin
   Password: 1234
-  Email: 1234@gmail.com
+  Email: user_sagmail.com
   Pet:
     type: dog
     status:
-      name: 1
       day: 1
-      hp: 6
-      interest: 5
-      stomach: 4
+      name: pet
+      hp: 41
+      interest: 3
+      stomach: 3
       sleepines: 3
-      intelect: 6
-      purity: 5
+      intelect: 5
+      purity: 3

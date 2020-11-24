@@ -7,4 +7,4 @@ puts  test_pass["methods"]["Password"]
 
 
 acc = UserAunt.new("user_sa")
-puts acc.data["methods"]["Pet"]["type"]
+acc.data["methods"]["Pet"]["type"] = "cat"
