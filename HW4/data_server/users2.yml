@@ -1,0 +1,31 @@
+user: super_admin
+methods_sadmin:
+  Role: super_admin
+  Password: 1234
+  Email: 1234@gmail.com
+  Pet:
+    type: dog
+    status:
+      name: dog
+      day: 1
+      hp: 6
+      interest: 5
+      stomach: 4
+      sleepiness: 3
+      intelect: 6
+      purity: 5
+user2: admin
+methods_admin:
+  Role: super_admin
+  Password: 1234
+  Email: 1234@gmail.com
+  Pet:
+    type: dog
+    status:
+      - day: 1
+      - hp: 6
+      - interest: 5
+      - stomach: 4
+      - sleepines: 3
+      - intelect: 6
+      - purity: 5

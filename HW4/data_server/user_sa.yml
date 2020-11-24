@@ -1,0 +1,15 @@
+---
+methods:
+  Role: super_admin
+  Password: 1234
+  Email: 1234@gmail.com
+  Pet:
+    type: dog
+    status:
+      day: 1
+      hp: 6
+      interest: 5
+      stomach: 4
+      sleepines: 3
+      intelect: 6
+      purity: 5
