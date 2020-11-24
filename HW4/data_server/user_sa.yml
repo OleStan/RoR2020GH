@@ -6,6 +6,7 @@ methods:
   Pet:
     type: dog
     status:
+      name: 1
       day: 1
       hp: 6
       interest: 5

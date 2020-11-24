@@ -83,6 +83,9 @@ class UserAunt
                            "intelect"=>pet.intelect,
                            "purity"=>pet.purity}}}}
     File.open("data_server/#{account}.yml", "w") { |file| file.write(a.to_yaml) }
+    def open_file
+
+    end
   end
 
 

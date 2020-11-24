@@ -674,6 +674,19 @@ def register
   when 2
     login_check
     pass_check
+    puts $login
+    acc = UserAunt.new("#{$login}")
+    type = acc.data["methods"]["Pet"]["type"]
+    name = acc.data["methods"]["Pet"]["status"]["name"]
+    stomach = acc.data["methods"]["Pet"]["status"]["stomach"]
+    hp = acc.data["methods"]["Pet"]["status"]["hp"]
+    interest = acc.data["methods"]["Pet"]["status"]["interest"]
+    sleepines = acc.data["methods"]["Pet"]["status"]["sleepines"]
+    intelect = acc.data["methods"]["Pet"]["status"]["intelect"]
+    purity = acc.data["methods"]["Pet"]["status"]["purity"]
+    pet = Pet.new(type, name, stomach, hp, interest, sleepines, intelect, purity)
+    timer = Timer.new(acc.data["methods"]["Pet"]["status"]["day"], pet)
+    start_game(acc, pet, timer)
   else
     puts "try again"
     register
